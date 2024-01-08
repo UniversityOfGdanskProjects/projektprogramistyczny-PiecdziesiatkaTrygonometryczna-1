@@ -1,0 +1,4 @@
+body {
+    height: 100vh; /* 100% of the viewport height */
+    overflow: hidden; /* disable scrolling */
+  }

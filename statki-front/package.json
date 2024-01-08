@@ -1,5 +1,6 @@
 {
   "name": "statki-front",
+  "main": "src/HomePage.js",
   "version": "0.1.0",
   "private": true,
   "scripts": {

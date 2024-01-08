@@ -6,8 +6,11 @@ export default function Home() {
   const boardSize = 30;
   const board = Array(boardSize).fill().map(() => Array(boardSize).fill(0));
   const [message, setMessage] = useState('');
+  const [gameStarted, setGameStarted] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [startY, setStartY] = useState(0);
 
-  const [shipCoordinates, setShipCoordinates] = useState({ x: 0, y: 0 });
+  const [shipCoordinates, setShipCoordinates] = useState(null);
   const [islands, setIslands] = useState([]);
   const [direction, setDirection] = useState('');
 
@@ -77,6 +80,8 @@ export default function Home() {
   }, [handleArrowCommandSequence]);
 
   useEffect(() => {
+    if (!gameStarted) return;
+
     const timer = setInterval(() => {
       setShipCoordinates((prev) => {
         let updatedCoordinates = { ...prev };
@@ -105,7 +110,7 @@ export default function Home() {
       while (islands.length < 100) {
         const x = Math.floor(Math.random() * boardSize);
         const y = Math.floor(Math.random() * boardSize);
-        if ((x !== 0 || y !== 0) && !islands.some((island) => island.x === x && island.y === y)) {
+        if ((x !== shipCoordinates.x || y !== shipCoordinates.y) && !islands.some((island) => island.x === x && island.y === y)) {
           islands.push({ x, y });
         }
       }
@@ -117,7 +122,7 @@ export default function Home() {
     return () => {
       clearInterval(timer);
     };
-  }, [direction, boardSize]);
+  }, [direction, boardSize, gameStarted]);
 
 
   const [commandSequence, setCommandSequence] = useState('');
@@ -196,6 +201,23 @@ export default function Home() {
     }
     resetForm();
   };
+
+  const startGame = (x, y) => {
+    setShipCoordinates({ x: Number(x), y: Number(y) });
+    setGameStarted(true);
+  };
+
+  if (!gameStarted) {
+    return (
+      <div>
+        <h1>Select starting coordinates</h1>
+        <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartX(e.target.value)} />
+        <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartY(e.target.value)} />
+        <button onClick={() => startGame(startX, startY)}>Start Game</button>
+      </div>
+    );
+  }
+
 
 return (
   <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
