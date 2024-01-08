@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { Formik, Field } from 'formik';
 
 export default function Home() {
-  const boardSize = 30;
+  const [boardSize, setBoardSize] = useState(35);
+  const [islandCount, setIslandCount] = useState(100);
   const board = Array(boardSize).fill().map(() => Array(boardSize).fill(0));
   const [message, setMessage] = useState('');
   const [gameStarted, setGameStarted] = useState(false);
@@ -107,7 +108,7 @@ export default function Home() {
 
     const generateIslands = () => {
       const islands = [];
-      while (islands.length < 100) {
+      while (islands.length < islandCount) {
         const x = Math.floor(Math.random() * boardSize);
         const y = Math.floor(Math.random() * boardSize);
         if ((x !== shipCoordinates.x || y !== shipCoordinates.y) && !islands.some((island) => island.x === x && island.y === y)) {
@@ -116,13 +117,15 @@ export default function Home() {
       }
       return islands;
     };
-
-    setIslands(generateIslands());
-
+  
+    if (islands.length !== islandCount) {
+      setIslands(generateIslands());
+    }
+  
     return () => {
       clearInterval(timer);
     };
-  }, [direction, boardSize, gameStarted]);
+  }, [direction, boardSize, gameStarted, islandCount]);
 
 
   const [commandSequence, setCommandSequence] = useState('');
@@ -172,7 +175,7 @@ export default function Home() {
   
 
   const saveToFile = () => {
-    const data = JSON.stringify({ shipCoordinates, islands });
+    const data = JSON.stringify({ shipCoordinates, islands, boardSize });
     const blob = new Blob([data], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -188,6 +191,8 @@ export default function Home() {
       const data = JSON.parse(event.target.result);
       setShipCoordinates(data.shipCoordinates);
       setIslands(data.islands);
+      setBoardSize(data.boardSize);
+      setGameStarted(true); // Rozpocznij grę po wczytaniu pliku
     };
     reader.readAsText(file);
   };
@@ -202,18 +207,38 @@ export default function Home() {
     resetForm();
   };
 
-  const startGame = (x, y) => {
+  const startGame = (x, y, boardSize, islandCount) => {
+    if (x > 34 || y > 34) {
+      setMessage('X and Y cannot be greater than 34.');
+      return;
+    }
+  
+    if (boardSize > 45) {
+      setMessage('Board size cannot be greater than 45.');
+      return;
+    }
+  
+    if (islandCount > (boardSize * boardSize - 1)) {
+      setMessage(`For board size ${boardSize}, island count cannot be greater than ${(boardSize * boardSize) - 1}.`);
+      return;
+    }
+  
     setShipCoordinates({ x: Number(x), y: Number(y) });
+    setBoardSize(Number(boardSize));
+    setIslandCount(Number(islandCount));
     setGameStarted(true);
   };
 
   if (!gameStarted) {
     return (
-      <div>
-        <h1>Select starting coordinates</h1>
-        <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartX(e.target.value)} />
-        <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartY(e.target.value)} />
-        <button onClick={() => startGame(startX, startY)}>Start Game</button>
+        <div className="centerContent">
+        <h1>Witaj w grze Statki na morzu! Wybierz punkt początkowy, ilość wysep, lub wczytaj grę z pliku!</h1>
+        <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartX(e.target.value)} placeholder="X" /> 
+        <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartY(e.target.value)} placeholder="Y" /> 
+        <input type="number" min="1" max={boardSize * boardSize - 1} onChange={(e) => setIslandCount(e.target.value)} placeholder="Liczba wysep" />
+        <button onClick={() => startGame(startX, startY, boardSize, islandCount)}>Start Game</button>
+        <input type="file" onChange={loadFromFile} />
+        <p>{message}</p>
       </div>
     );
   }
@@ -260,8 +285,9 @@ return (
       )}
     </div>
 
-    <button onClick={saveToFile}>Save Map to File</button>
+    <button className="saveToFile" onClick={saveToFile}>Save Game to File</button>
     <input type="file" onChange={loadFromFile} />
+    <button className="exitGame" onClick={() => setGameStarted(false)}>Exit Game</button>
   </main>
 );
 }
