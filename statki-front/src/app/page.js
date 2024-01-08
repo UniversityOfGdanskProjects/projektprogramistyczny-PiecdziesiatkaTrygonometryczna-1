@@ -65,26 +65,30 @@ export default function Home() {
   
   const handleCommandSequence = (event) => {
     event.preventDefault();
+    let newCoordinates = { ...shipCoordinates };
     for (let command of commandSequence) {
-      let newCoordinates;
       switch (command) {
         case 'w':
-          newCoordinates = { x: shipCoordinates.x, y: Math.max(shipCoordinates.y - 1, 0) };
+          newCoordinates = { x: newCoordinates.x, y: Math.max(newCoordinates.y - 1, 0) };
           break;
         case 's':
-          newCoordinates = { x: shipCoordinates.x, y: Math.min(shipCoordinates.y + 1, boardSize - 1) };
+          newCoordinates = { x: newCoordinates.x, y: Math.min(newCoordinates.y + 1, boardSize - 1) };
           break;
         case 'd':
-          newCoordinates = { x: Math.min(shipCoordinates.x + 1, boardSize - 1), y: shipCoordinates.y };
+          newCoordinates = { x: Math.min(newCoordinates.x + 1, boardSize - 1), y: newCoordinates.y };
           break;
         case 'a':
-          newCoordinates = { x: Math.max(shipCoordinates.x - 1, 0), y: shipCoordinates.y };
+          newCoordinates = { x: Math.max(newCoordinates.x - 1, 0), y: newCoordinates.y };
           break;
         default:
           break;
       }
-      moveShip(newCoordinates);
+      if (islands.some((island) => island.x === newCoordinates.x && island.y === newCoordinates.y)) {
+        console.log('Land detected! Cancelling move.');
+        return;
+      }
     }
+    setShipCoordinates(newCoordinates);
     setCommandSequence('');
   };
 
