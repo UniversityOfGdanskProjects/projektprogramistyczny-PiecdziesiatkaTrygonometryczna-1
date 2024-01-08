@@ -9,6 +9,42 @@ export default function Home() {
   const [islands, setIslands] = useState([]);
   const [direction, setDirection] = useState('');
 
+  const handleArrowCommandSequence = (command) => {
+    moveShip(command);
+  };
+
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      switch (event.key) {
+        case 'ArrowUp':
+          setCommandSequence('w');
+          handleArrowCommandSequence('w');
+          break;
+        case 'ArrowLeft':
+          setCommandSequence('a');
+          handleArrowCommandSequence('a');
+          break;
+        case 'ArrowDown':
+          setCommandSequence('s');
+          handleArrowCommandSequence('s');
+          break;
+        case 'ArrowRight':
+          setCommandSequence('d');
+          handleArrowCommandSequence('d');
+          break;
+        default:
+          break;
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyDown);
+  
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleArrowCommandSequence]);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setShipCoordinates((prev) => {
@@ -55,16 +91,7 @@ export default function Home() {
 
   const [commandSequence, setCommandSequence] = useState('');
 
-  const moveShip = (newCoordinates) => {
-    if (islands.some((island) => island.x === newCoordinates.x && island.y === newCoordinates.y)) {
-      console.log('Land detected! Cancelling move.');
-      return;
-    }
-    setShipCoordinates(newCoordinates);
-  };
-  
-  const handleCommandSequence = (event) => {
-    event.preventDefault();
+  const moveShip = (commandSequence) => {
     let newCoordinates = { ...shipCoordinates };
     for (let command of commandSequence) {
       switch (command) {
@@ -91,6 +118,13 @@ export default function Home() {
     setShipCoordinates(newCoordinates);
     setCommandSequence('');
   };
+  
+  const handleFormCommandSequence = (event) => {
+    event.preventDefault();
+    let commandSequence = event.target.elements[0].value;
+    moveShip(commandSequence);
+  };
+  
 
   const saveToFile = () => {
     const data = JSON.stringify({ shipCoordinates, islands });
@@ -118,7 +152,7 @@ return (
     <div style={{ position: 'absolute', top: 0, left: 0 }}>
       <p>Ship Coordinates: {shipCoordinates.x}, {shipCoordinates.y}</p>
     </div>
-    <form onSubmit={handleCommandSequence}>
+    <form onSubmit={handleFormCommandSequence}>
       <input
         type="text"
         value={commandSequence}
