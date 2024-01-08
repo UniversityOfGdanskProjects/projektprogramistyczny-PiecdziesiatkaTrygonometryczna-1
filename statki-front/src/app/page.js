@@ -5,30 +5,33 @@ export default function Home() {
   const boardSize = 30;
   const board = Array(boardSize).fill().map(() => Array(boardSize).fill(0));
 
-  const [highlightedCell, setHighlightedCell] = useState({ x: 0, y: 0 });
+  const [shipCoordinates, setShipCoordinates] = useState({ x: 0, y: 0 });
   const [islands, setIslands] = useState([]);
+  const [direction, setDirection] = useState('');
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
-      switch (event.key) {
-        case 'ArrowUp':
-          setHighlightedCell((prev) => ({ x: prev.x, y: Math.max(prev.y - 1, 0) }));
-          break;
-        case 'ArrowDown':
-          setHighlightedCell((prev) => ({ x: prev.x, y: Math.min(prev.y + 1, boardSize - 1) }));
-          break;
-        case 'ArrowLeft':
-          setHighlightedCell((prev) => ({ x: Math.max(prev.x - 1, 0), y: prev.y }));
-          break;
-        case 'ArrowRight':
-          setHighlightedCell((prev) => ({ x: Math.min(prev.x + 1, boardSize - 1), y: prev.y }));
-          break;
-        default:
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
+    const timer = setInterval(() => {
+      setShipCoordinates((prev) => {
+        let updatedCoordinates = { ...prev };
+        switch (direction) {
+          case 'N':
+            updatedCoordinates = { x: prev.x, y: Math.max(prev.y - 1, 0) };
+            break;
+          case 'S':
+            updatedCoordinates = { x: prev.x, y: Math.min(prev.y + 1, boardSize - 1) };
+            break;
+          case 'E':
+            updatedCoordinates = { x: Math.min(prev.x + 1, boardSize - 1), y: prev.y };
+            break;
+          case 'W':
+            updatedCoordinates = { x: Math.max(prev.x - 1, 0), y: prev.y };
+            break;
+          default:
+            break;
+        }
+        return updatedCoordinates;
+      });
+    }, 1000);
 
     const generateIslands = () => {
       const islands = [];
@@ -45,31 +48,78 @@ export default function Home() {
     setIslands(generateIslands());
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      clearInterval(timer);
     };
-  }, []);
+  }, [direction, boardSize]);
 
-  return (
-    <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${boardSize}, 1fr)`, gap: '1px' }}>
-        {board.map((row, i) =>
-          row.map((cell, j) => (
-            <div
-              key={`${i}-${j}`}
-              style={{
-                width: '20px',
-                height: '20px',
-                backgroundColor: islands.some((island) => island.x === j && island.y === i)
-                  ? 'green'
-                  : i === highlightedCell.y && j === highlightedCell.x
-                  ? 'grey'
-                  : 'lightblue',
-              }}
-            >
-            </div>
-          ))
-        )}
-      </div>
-    </main>
-  );
+
+  const [commandSequence, setCommandSequence] = useState('');
+
+  const moveShip = (newCoordinates) => {
+    if (islands.some((island) => island.x === newCoordinates.x && island.y === newCoordinates.y)) {
+      console.log('Land detected! Cancelling move.');
+      return;
+    }
+    setShipCoordinates(newCoordinates);
+  };
+  
+  const handleCommandSequence = (event) => {
+    event.preventDefault();
+    for (let command of commandSequence) {
+      let newCoordinates;
+      switch (command) {
+        case 'w':
+          newCoordinates = { x: shipCoordinates.x, y: Math.max(shipCoordinates.y - 1, 0) };
+          break;
+        case 's':
+          newCoordinates = { x: shipCoordinates.x, y: Math.min(shipCoordinates.y + 1, boardSize - 1) };
+          break;
+        case 'd':
+          newCoordinates = { x: Math.min(shipCoordinates.x + 1, boardSize - 1), y: shipCoordinates.y };
+          break;
+        case 'a':
+          newCoordinates = { x: Math.max(shipCoordinates.x - 1, 0), y: shipCoordinates.y };
+          break;
+        default:
+          break;
+      }
+      moveShip(newCoordinates);
+    }
+    setCommandSequence('');
+  };
+
+return (
+  <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <div style={{ position: 'absolute', top: 0, left: 0 }}>
+      <p>Ship Coordinates: {shipCoordinates.x}, {shipCoordinates.y}</p>
+    </div>
+    <form onSubmit={handleCommandSequence}>
+      <input
+        type="text"
+        value={commandSequence}
+        onChange={(event) => setCommandSequence(event.target.value)}
+      />
+      <button type="submit">Execute Command Sequence</button>
+    </form>
+    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${boardSize}, 1fr)`, gap: '1px' }}>
+      {board.map((row, i) =>
+        row.map((cell, j) => (
+          <div
+            key={`${i}-${j}`}
+            style={{
+              width: '20px',
+              height: '20px',
+              backgroundColor: islands.some((island) => island.x === j && island.y === i)
+                ? 'green'
+                : i === shipCoordinates.y && j === shipCoordinates.x
+                ? 'grey'
+                : 'lightblue',
+            }}
+          >
+          </div>
+        ))
+      )}
+    </div>
+  </main>
+);
 }
