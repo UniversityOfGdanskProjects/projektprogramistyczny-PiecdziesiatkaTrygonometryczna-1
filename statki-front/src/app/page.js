@@ -38,7 +38,7 @@ export default function Home() {
       while (islands.length < 100) {
         const x = Math.floor(Math.random() * boardSize);
         const y = Math.floor(Math.random() * boardSize);
-        if (!islands.some((island) => island.x === x && island.y === y)) {
+        if ((x !== 0 || y !== 0) && !islands.some((island) => island.x === x && island.y === y)) {
           islands.push({ x, y });
         }
       }
