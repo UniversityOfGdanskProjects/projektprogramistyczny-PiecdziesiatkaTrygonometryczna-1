@@ -6,6 +6,7 @@ export default function Home() {
   const board = Array(boardSize).fill().map(() => Array(boardSize).fill(0));
 
   const [highlightedCell, setHighlightedCell] = useState({ x: 0, y: 0 });
+  const [islands, setIslands] = useState([]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -29,6 +30,20 @@ export default function Home() {
 
     window.addEventListener('keydown', handleKeyDown);
 
+    const generateIslands = () => {
+      const islands = [];
+      while (islands.length < 100) {
+        const x = Math.floor(Math.random() * boardSize);
+        const y = Math.floor(Math.random() * boardSize);
+        if (!islands.some((island) => island.x === x && island.y === y)) {
+          islands.push({ x, y });
+        }
+      }
+      return islands;
+    };
+
+    setIslands(generateIslands());
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
@@ -36,7 +51,6 @@ export default function Home() {
 
   return (
     <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <h1></h1>
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${boardSize}, 1fr)`, gap: '1px' }}>
         {board.map((row, i) =>
           row.map((cell, j) => (
@@ -45,9 +59,14 @@ export default function Home() {
               style={{
                 width: '20px',
                 height: '20px',
-                backgroundColor: i === highlightedCell.y && j === highlightedCell.x ? 'grey' : 'lightblue',
+                backgroundColor: islands.some((island) => island.x === j && island.y === i)
+                  ? 'green'
+                  : i === highlightedCell.y && j === highlightedCell.x
+                  ? 'grey'
+                  : 'lightblue',
               }}
-            ></div>
+            >
+            </div>
           ))
         )}
       </div>
