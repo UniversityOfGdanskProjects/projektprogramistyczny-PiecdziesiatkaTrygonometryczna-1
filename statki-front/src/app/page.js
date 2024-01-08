@@ -92,6 +92,27 @@ export default function Home() {
     setCommandSequence('');
   };
 
+  const saveToFile = () => {
+    const data = JSON.stringify({ shipCoordinates, islands });
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = 'map.json';
+    link.href = url;
+    link.click();
+  };
+  
+  const loadFromFile = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const data = JSON.parse(event.target.result);
+      setShipCoordinates(data.shipCoordinates);
+      setIslands(data.islands);
+    };
+    reader.readAsText(file);
+  };
+
 return (
   <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
     <div style={{ position: 'absolute', top: 0, left: 0 }}>
@@ -124,6 +145,9 @@ return (
         ))
       )}
     </div>
+
+    <button onClick={saveToFile}>Save Map to File</button>
+    <input type="file" onChange={loadFromFile} />
   </main>
 );
 }
