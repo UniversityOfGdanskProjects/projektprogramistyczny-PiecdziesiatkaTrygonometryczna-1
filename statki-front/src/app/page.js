@@ -1,18 +1,49 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { Formik, Field } from 'formik';
 
 export default function Home() {
   const boardSize = 30;
   const board = Array(boardSize).fill().map(() => Array(boardSize).fill(0));
+  const [message, setMessage] = useState('');
 
   const [shipCoordinates, setShipCoordinates] = useState({ x: 0, y: 0 });
   const [islands, setIslands] = useState([]);
   const [direction, setDirection] = useState('');
 
   const handleArrowCommandSequence = (command) => {
+    setMessage('');
     moveShip(command);
   };
-
+  
+  const checkPath = (commandSequence) => {
+    let tempCoordinates = { ...shipCoordinates };
+  
+    for (let command of commandSequence) {
+      switch (command) {
+        case 'w':
+          tempCoordinates.y = Math.max(tempCoordinates.y - 1, 0);
+          break;
+        case 's':
+          tempCoordinates.y = Math.min(tempCoordinates.y + 1, boardSize - 1);
+          break;
+        case 'd':
+          tempCoordinates.x = Math.min(tempCoordinates.x + 1, boardSize - 1);
+          break;
+        case 'a':
+          tempCoordinates.x = Math.max(tempCoordinates.x - 1, 0);
+          break;
+        default:
+          break;
+      }
+  
+      if (islands.some((island) => island.x === tempCoordinates.x && island.y === tempCoordinates.y)) {
+        return true;
+      }
+    }
+  
+    return false;
+  };
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -93,37 +124,46 @@ export default function Home() {
 
   const moveShip = (commandSequence) => {
     let newCoordinates = { ...shipCoordinates };
+    let message = '';
+  
     for (let command of commandSequence) {
+      let tempCoordinates = { ...newCoordinates };
+  
       switch (command) {
         case 'w':
-          newCoordinates = { x: newCoordinates.x, y: Math.max(newCoordinates.y - 1, 0) };
+          tempCoordinates.y = Math.max(tempCoordinates.y - 1, 0);
           break;
         case 's':
-          newCoordinates = { x: newCoordinates.x, y: Math.min(newCoordinates.y + 1, boardSize - 1) };
+          tempCoordinates.y = Math.min(tempCoordinates.y + 1, boardSize - 1);
           break;
         case 'd':
-          newCoordinates = { x: Math.min(newCoordinates.x + 1, boardSize - 1), y: newCoordinates.y };
+          tempCoordinates.x = Math.min(tempCoordinates.x + 1, boardSize - 1);
           break;
         case 'a':
-          newCoordinates = { x: Math.max(newCoordinates.x - 1, 0), y: newCoordinates.y };
+          tempCoordinates.x = Math.max(tempCoordinates.x - 1, 0);
           break;
         default:
           break;
       }
-      if (islands.some((island) => island.x === newCoordinates.x && island.y === newCoordinates.y)) {
-        console.log('Land detected! Cancelling move.');
-        return;
+  
+      if (islands.some((island) => island.x === tempCoordinates.x && island.y === tempCoordinates.y)) {
+        message = 'Land detected! Cancelling move.';
+        break;
       }
+  
+      newCoordinates = tempCoordinates;
     }
+
+    if (message) {
+      setMessage(message);
+    }
+  
     setShipCoordinates(newCoordinates);
     setCommandSequence('');
   };
   
-  const handleFormCommandSequence = (event) => {
-    event.preventDefault();
-    let commandSequence = event.target.elements[0].value;
-    moveShip(commandSequence);
-  };
+  
+  
   
 
   const saveToFile = () => {
@@ -147,19 +187,37 @@ export default function Home() {
     reader.readAsText(file);
   };
 
+  const handleFormCommandSequence = (values, { resetForm }) => {
+    setMessage('');
+    if (!checkPath(values.commandSequence)) {
+      moveShip(values.commandSequence);
+    } else {
+      setMessage('Land detected in path! Cancelling move.');
+    }
+    resetForm();
+  };
+
 return (
   <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
     <div style={{ position: 'absolute', top: 0, left: 0 }}>
       <p>Ship Coordinates: {shipCoordinates.x}, {shipCoordinates.y}</p>
     </div>
-    <form onSubmit={handleFormCommandSequence}>
-      <input
-        type="text"
-        value={commandSequence}
-        onChange={(event) => setCommandSequence(event.target.value)}
-      />
-      <button type="submit">Execute Command Sequence</button>
-    </form>
+    <Formik initialValues={{ commandSequence: '' }} onSubmit={handleFormCommandSequence}>
+      {({ handleSubmit, handleChange, values }) => (
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="commandSequence"
+            value={values.commandSequence}
+            onChange={handleChange}
+          />
+          <button type="submit">Move</button>
+        </form>
+      )}
+    </Formik>
+    <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', textAlign: 'center', padding: '10px', background: 'rgba(255, 255, 255, 0.9)' }}>
+      <p>{message}</p>
+    </div>
     <div style={{ display: 'grid', gridTemplateColumns: `repeat(${boardSize}, 1fr)`, gap: '1px' }}>
       {board.map((row, i) =>
         row.map((cell, j) => (
