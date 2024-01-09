@@ -1,6 +1,6 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { Formik, Field } from 'formik';
+import { useState, useEffect, useLayoutEffect} from 'react';
+import { Formik} from 'formik';
 
 export default function Home() {
   const [boardSize, setBoardSize] = useState(35);
@@ -120,7 +120,7 @@ export default function Home() {
     };
   }, [handleArrowCommandSequence]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!gameStarted) return;
 
     const timer = setInterval(() => {
@@ -157,11 +157,11 @@ export default function Home() {
       }
       return islands;
     };
-  
+
     if (islands.length !== islandCount) {
       setIslands(generateIslands());
     }
-  
+
     return () => {
       clearInterval(timer);
     };
@@ -210,10 +210,6 @@ export default function Home() {
     setCommandSequence('');
   };
   
-  
-  
-  
-
   const saveToFile = () => {
     const data = JSON.stringify({ shipCoordinates, islands, boardSize });
     const blob = new Blob([data], { type: 'application/json' });
@@ -232,7 +228,7 @@ export default function Home() {
       setShipCoordinates(data.shipCoordinates);
       setIslands(data.islands);
       setBoardSize(data.boardSize);
-      setGameStarted(true); // Rozpocznij grę po wczytaniu pliku
+      setGameStarted(true);
     };
     reader.readAsText(file);
   };
