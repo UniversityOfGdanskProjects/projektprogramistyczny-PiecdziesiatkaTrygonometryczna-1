@@ -245,17 +245,17 @@ export default function Home() {
 
   const startGame = (x, y, boardSize, islandCount) => {
     if (x > 34 || y > 34) {
-      setMessage('X and Y cannot be greater than 34.');
+      setMessage('Koordynaty nie mogą być większe niż 34.');
       return;
     }
   
     if (boardSize > 45) {
-      setMessage('Board size cannot be greater than 45.');
+      setMessage('Rozmiar planszy nie może być większy niż 45.');
       return;
     }
   
     if (islandCount > (boardSize * boardSize - 1)) {
-      setMessage(`For board size ${boardSize}, island count cannot be greater than ${(boardSize * boardSize) - 1}.`);
+      setMessage(`Dla rozmiaru planszy ${boardSize}, ilość wysp nie może być większa niż ${(boardSize * boardSize) - 1}.`);
       return;
     }
   
