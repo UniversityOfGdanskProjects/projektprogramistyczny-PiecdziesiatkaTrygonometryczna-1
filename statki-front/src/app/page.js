@@ -14,6 +14,46 @@ export default function Home() {
   const [shipCoordinates, setShipCoordinates] = useState(null);
   const [islands, setIslands] = useState([]);
   const [direction, setDirection] = useState('');
+  const [showModal, setShowModal] = useState(false);
+
+
+  useEffect(() => {
+    if (gameStarted && message) {
+      setShowModal(true);
+    }
+  }, [gameStarted, message]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setMessage('');
+  };
+  
+  function Modal({ message, onClose }) {
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 9999
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          padding: '20px',
+          borderRadius: '10px'
+        }}>
+          <p>{message}</p>
+          <button onClick={onClose}>Close</button>
+        </div>
+      </div>
+    );
+  }
+
 
   const handleArrowCommandSequence = (command) => {
     setMessage('');
@@ -155,7 +195,7 @@ export default function Home() {
       }
   
       if (islands.some((island) => island.x === tempCoordinates.x && island.y === tempCoordinates.y)) {
-        message = 'Land detected! Cancelling move.';
+        message = 'Próbujesz wpłynąć na wyspę! Powstrzymaliśmy Cię od tego...';
         break;
       }
   
@@ -202,7 +242,7 @@ export default function Home() {
     if (!checkPath(values.commandSequence)) {
       moveShip(values.commandSequence);
     } else {
-      setMessage('Land detected in path! Cancelling move.');
+      setMessage('Próbujesz wpłynąć na wyspę! Powstrzymaliśmy Cię od tego...');
     }
     resetForm();
   };
@@ -245,10 +285,14 @@ export default function Home() {
 
 
 return (
+  
   <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
     <div style={{ position: 'absolute', top: 0, left: 0 }}>
-      <p>Ship Coordinates: {shipCoordinates.x}, {shipCoordinates.y}</p>
+        <div className="absolute">
+      <p id="cords">Obecne koordynaty statku: ({shipCoordinates.x}, {shipCoordinates.y})</p>
     </div>
+    </div>
+    {showModal && <Modal message={message} onClose={handleCloseModal} />}
     <Formik initialValues={{ commandSequence: '' }} onSubmit={handleFormCommandSequence}>
       {({ handleSubmit, handleChange, values }) => (
         <form onSubmit={handleSubmit}>
@@ -262,28 +306,25 @@ return (
         </form>
       )}
     </Formik>
-    <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', textAlign: 'center', padding: '10px', background: 'rgba(255, 255, 255, 0.9)' }}>
-      <p>{message}</p>
-    </div>
-    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${boardSize}, 1fr)`, gap: '1px' }}>
-      {board.map((row, i) =>
-        row.map((cell, j) => (
-          <div
-            key={`${i}-${j}`}
-            style={{
-              width: '20px',
-              height: '20px',
-              backgroundColor: islands.some((island) => island.x === j && island.y === i)
-                ? 'green'
-                : i === shipCoordinates.y && j === shipCoordinates.x
-                ? 'grey'
-                : 'lightblue',
-            }}
-          >
-          </div>
-        ))
-      )}
-    </div>
+    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${boardSize}, 1fr)`, gap: '1px', backgroundColor: 'white' }}>
+  {board.map((row, i) =>
+    row.map((cell, j) => (
+      <div
+        key={`${i}-${j}`}
+        style={{
+          width: '20px',
+          height: '20px',
+          backgroundColor: islands.some((island) => island.x === j && island.y === i)
+            ? 'green'
+            : i === shipCoordinates.y && j === shipCoordinates.x
+            ? 'grey'
+            : 'lightblue',
+        }}
+      >
+      </div>
+    ))
+  )}
+</div>
 
     <button className="saveToFile" onClick={saveToFile}>Save Game to File</button>
     <input type="file" onChange={loadFromFile} />
