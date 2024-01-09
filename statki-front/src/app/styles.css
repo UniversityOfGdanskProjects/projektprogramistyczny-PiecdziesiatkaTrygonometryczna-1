@@ -1,0 +1,201 @@
+body {
+  overflow: hidden;
+  height: 100vh;
+  margin: 0;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+input[type=number], input[type=file] {
+  padding: 10px;
+  font-size: 16px;
+  margin: 10px;
+}
+
+.customButton {
+  display: inline-block;
+  padding: 10px;
+  cursor: pointer;
+  background: blue;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+.customButton:hover {
+  transform: scale(1.6);
+  background-color: lightpink;
+}
+
+button {
+  font-weight: bold;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+  transition: transform 0.3s ease, background-color 0.3s;
+  width: 120px;
+  background-color: lightblue;
+}
+button:hover {
+  transform: scale(1.6);
+  background-color: lightpink;
+}
+
+button[type=submit] {
+  background-color: lightblue;
+}
+
+button.saveToFile {
+  background-color: lightgreen;
+}
+
+button.exitGame {
+  background-color: lightcoral;
+}
+
+button:hover {
+  transform: scale(1.6);
+  background-color: lightpink;
+}
+
+h1 {
+  color: blue;
+  font-family: Arial;
+  text-align: center;
+}
+
+.centerContent {
+  background: linear-gradient(to right, lightpink, lightblue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.centerContent h1 {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 2em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.centerContent input[type=number] {
+  width: 200px;
+  height: 30px;
+  border-radius: 15px;
+  border: 2px solid black;
+  background-color: rgb(241, 255, 224);
+  text-align: center;
+}
+
+#cords {
+  background-color: rgba(0, 0, 0, 0.3);
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(109%, 0%);
+  text-align: center;
+  margin-top: 50px;
+  font-size: 40px;
+  font-family: "Arial", sans-serif;
+  padding: 10px;
+  display: inline-block;
+  animation: rainbowAnimation 2s infinite;
+  white-space: nowrap;
+}
+
+@keyframes rainbowAnimation {
+  0% {
+    color: red;
+  }
+  16.666% {
+    color: orange;
+  }
+  33.333% {
+    color: yellow;
+  }
+  50% {
+    color: green;
+  }
+  66.666% {
+    color: rgb(0, 247, 255);
+  }
+  83.333% {
+    color: rgb(149, 0, 255);
+  }
+  100% {
+    color: violet;
+  }
+}
+@keyframes rainbowAnimation2 {
+  0% {
+    background: red;
+  }
+  14% {
+    background: orange;
+  }
+  28% {
+    background: yellow;
+  }
+  42% {
+    background: lime;
+  }
+  57% {
+    background: cyan;
+  }
+  71% {
+    background: blue;
+  }
+  85% {
+    background: purple;
+  }
+  100% {
+    background: red;
+  }
+}
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+main {
+  background: linear-gradient(-45deg, red, orange, yellow, green, blue, indigo, violet);
+  background-size: 200% 200%;
+  animation: gradient 15s ease infinite;
+}
+
+#bottom-controls {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: rgba(17, 0, 80, 0.5);
+}
+
+#move {
+  font-size: 20px;
+  height: 40px;
+  background-color: #ffdca2;
+  border: 2px solid black;
+  border-radius: 10px;
+}
+
+#move_form {
+  position: absolute;
+  margin-right: 60%;
+}
+
+/*# sourceMappingURL=styles.css.map */
