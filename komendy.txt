@@ -1,1 +1,4 @@
 npm run dev
+
+sass input.scss output.css
+sass --watch input.scss:output.css

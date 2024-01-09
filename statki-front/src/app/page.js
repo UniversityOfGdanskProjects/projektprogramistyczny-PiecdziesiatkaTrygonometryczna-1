@@ -272,10 +272,10 @@ export default function Home() {
   if (!gameStarted) {
     return (
         <div className="centerContent">
-        <h1>Witaj w grze Statki na morzu! Wybierz punkt początkowy, ilość wysep, lub wczytaj grę z pliku!</h1>
+        <h1>Witaj w grze Statki na morzu! Wybierz punkt początkowy, ilość wysp, lub wczytaj grę z pliku!</h1>
         <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartX(e.target.value)} placeholder="X" /> 
         <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartY(e.target.value)} placeholder="Y" /> 
-        <input type="number" min="1" max={boardSize * boardSize - 1} onChange={(e) => setIslandCount(e.target.value)} placeholder="Liczba wysep" />
+        <input type="number" min="1" max={boardSize * boardSize - 1} onChange={(e) => setIslandCount(e.target.value)} placeholder="Liczba wysp" />
         <button onClick={() => startGame(startX, startY, boardSize, islandCount)}>Graj!</button>
         <input type="file" id="fileInput" style={{ display: 'none' }} onChange={loadFromFile} />
         <label htmlFor="fileInput" className="customButton">Wczytaj grę</label>

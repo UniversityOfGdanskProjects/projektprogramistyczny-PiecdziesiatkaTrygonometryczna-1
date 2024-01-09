@@ -1,3 +1,14 @@
+$primary-color: blue;
+$secondary-color: lightblue;
+$accent-color: lightpink;
+
+@mixin hover-effect {
+  &:hover {
+    transform: scale(1.6);
+    background-color: $accent-color;
+  }
+}
+
 body {
     overflow: hidden;
     height: 100vh;
@@ -13,22 +24,20 @@ input[type="number"], input[type="file"] {
 }
 
 .customButton {
-    display: inline-block;
-    padding: 10px;
-    cursor: pointer;
-    background: #008CBA;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-  }
-  
-  .customButton:hover {
-    transform: scale(1.6);
-    background-color: lightpink;
-  }
+  display: inline-block;
+  padding: 10px;
+  cursor: pointer;
+  background: $primary-color;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: all 0.3s ease;
 
+  @include hover-effect;
+}
+
+// ... (rest of your Sass code)
 
 button {
     font-weight: bold;
@@ -41,6 +50,8 @@ button {
     transition: transform 0.3s ease, background-color 0.3s;
     width: 120px;
     background-color: lightblue;
+
+  @include hover-effect;
 }
 
 button[type="submit"] {
@@ -158,10 +169,7 @@ h1 {
     border-radius: 10px;
 }
 
-
 #move_form {
 position: absolute;
 margin-right: 60%;
 }
-
-
