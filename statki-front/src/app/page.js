@@ -276,8 +276,9 @@ export default function Home() {
         <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartX(e.target.value)} placeholder="X" /> 
         <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartY(e.target.value)} placeholder="Y" /> 
         <input type="number" min="1" max={boardSize * boardSize - 1} onChange={(e) => setIslandCount(e.target.value)} placeholder="Liczba wysep" />
-        <button onClick={() => startGame(startX, startY, boardSize, islandCount)}>Start Game</button>
-        <input type="file" onChange={loadFromFile} />
+        <button onClick={() => startGame(startX, startY, boardSize, islandCount)}>Graj!</button>
+        <input type="file" id="fileInput" style={{ display: 'none' }} onChange={loadFromFile} />
+        <label htmlFor="fileInput" className="customButton">Wczytaj grę</label>
         <p>{message}</p>
       </div>
     );
@@ -295,14 +296,14 @@ return (
     {showModal && <Modal message={message} onClose={handleCloseModal} />}
     <Formik initialValues={{ commandSequence: '' }} onSubmit={handleFormCommandSequence}>
       {({ handleSubmit, handleChange, values }) => (
-        <form onSubmit={handleSubmit}>
-          <input
+        <form  id = "move_form" onSubmit={handleSubmit}>
+          <input id ="move"
             type="text"
             name="commandSequence"
             value={values.commandSequence}
             onChange={handleChange}
           />
-          <button type="submit">Move</button>
+          <button type="submit">Płyń!</button>
         </form>
       )}
     </Formik>
@@ -325,10 +326,12 @@ return (
     ))
   )}
 </div>
-
-    <button className="saveToFile" onClick={saveToFile}>Save Game to File</button>
-    <input type="file" onChange={loadFromFile} />
-    <button className="exitGame" onClick={() => setGameStarted(false)}>Exit Game</button>
+<div id="bottom-controls">
+    <button className="saveToFile" onClick={saveToFile}>Zapisz grę</button>
+    <input type="file" id="fileInput" style={{ display: 'none' }} onChange={loadFromFile} />
+    <label htmlFor="fileInput" className="customButton">Wczytaj grę</label>
+    <button className="exitGame" onClick={() => setGameStarted(false)}>Wyjdź z gry</button>
+    </div>
   </main>
 );
 }

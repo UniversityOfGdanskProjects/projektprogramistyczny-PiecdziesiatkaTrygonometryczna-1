@@ -12,8 +12,26 @@ input[type="number"], input[type="file"] {
     margin: 10px;
 }
 
+.customButton {
+    display: inline-block;
+    padding: 10px;
+    cursor: pointer;
+    background: #008CBA;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  .customButton:hover {
+    transform: scale(1.6);
+    background-color: lightpink;
+  }
+
+
 button {
-    
+    font-weight: bold;
     padding: 10px;
     font-size: 16px;
     border: none;
@@ -78,7 +96,7 @@ h1 {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(100%, 0%);
+    transform: translate(109%, 0%);
     text-align: center;
     margin-top: 50px;
     font-size: 40px;
@@ -121,3 +139,29 @@ h1 {
     background-size: 200% 200%;
     animation: gradient 15s ease infinite;
   }
+
+  #bottom-controls {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: rgba(17, 0, 80, 0.5);
+  }
+
+#move {
+    font-size: 20px;
+    height: 40px;
+    background-color: #ffdca2;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+
+#move_form {
+position: absolute;
+margin-right: 60%;
+}
+
+
