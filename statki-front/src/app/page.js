@@ -1,7 +1,7 @@
 'use client';
-import { useState, useEffect, useLayoutEffect} from 'react';
-import { Formik} from 'formik';
 
+import { useState, useEffect, useLayoutEffect } from 'react';
+import { Formik } from 'formik';
 export default function Home() {
   const [boardSize, setBoardSize] = useState(35);
   const [islandCount, setIslandCount] = useState(100);
@@ -15,7 +15,6 @@ export default function Home() {
   const [islands, setIslands] = useState([]);
   const [direction, setDirection] = useState('');
   const [showModal, setShowModal] = useState(false);
-
 
   useEffect(() => {
     if (gameStarted && message) {
@@ -53,7 +52,6 @@ export default function Home() {
       </div>
     );
   }
-
 
   const handleArrowCommandSequence = (command) => {
     setMessage('');
@@ -123,28 +121,6 @@ export default function Home() {
   useLayoutEffect(() => {
     if (!gameStarted) return;
 
-    const timer = setInterval(() => {
-      setShipCoordinates((prev) => {
-        let updatedCoordinates = { ...prev };
-        switch (direction) {
-          case 'N':
-            updatedCoordinates = { x: prev.x, y: Math.max(prev.y - 1, 0) };
-            break;
-          case 'S':
-            updatedCoordinates = { x: prev.x, y: Math.min(prev.y + 1, boardSize - 1) };
-            break;
-          case 'E':
-            updatedCoordinates = { x: Math.min(prev.x + 1, boardSize - 1), y: prev.y };
-            break;
-          case 'W':
-            updatedCoordinates = { x: Math.max(prev.x - 1, 0), y: prev.y };
-            break;
-          default:
-            break;
-        }
-        return updatedCoordinates;
-      });
-    }, 1000);
 
     const generateIslands = () => {
       const islands = [];
@@ -163,15 +139,16 @@ export default function Home() {
     }
 
     return () => {
-      clearInterval(timer);
+      
     };
   }, [direction, boardSize, gameStarted, islandCount]);
-
 
   const [commandSequence, setCommandSequence] = useState('');
 
   const moveShip = (commandSequence) => {
-    let newCoordinates = { ...shipCoordinates };
+    let
+
+ newCoordinates = { ...shipCoordinates };
     let message = '';
   
     for (let command of commandSequence) {
@@ -267,7 +244,7 @@ export default function Home() {
 
   if (!gameStarted) {
     return (
-        <div className="centerContent">
+      <div className="centerContent">
         <h1>Witaj w grze Statki na morzu! Wybierz punkt początkowy, ilość wysp, lub wczytaj grę z pliku!</h1>
         <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartX(e.target.value)} placeholder="X" /> 
         <input type="number" min="0" max={boardSize - 1} onChange={(e) => setStartY(e.target.value)} placeholder="Y" /> 
@@ -280,54 +257,52 @@ export default function Home() {
     );
   }
 
-
-return (
-  
-  <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-    <div style={{ position: 'absolute', top: 0, left: 0 }}>
+  return (
+    <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0 }}>
         <div className="absolute">
-      <p id="cords">Obecne koordynaty statku: ({shipCoordinates.x}, {shipCoordinates.y})</p>
-    </div>
-    </div>
-    {showModal && <Modal message={message} onClose={handleCloseModal} />}
-    <Formik initialValues={{ commandSequence: '' }} onSubmit={handleFormCommandSequence}>
-      {({ handleSubmit, handleChange, values }) => (
-        <form  id = "move_form" onSubmit={handleSubmit}>
-          <input id ="move"
-            type="text"
-            name="commandSequence"
-            value={values.commandSequence}
-            onChange={handleChange}
-          />
-          <button type="submit">Płyń!</button>
-        </form>
-      )}
-    </Formik>
-    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${boardSize}, 1fr)`, gap: '1px', backgroundColor: 'white' }}>
-  {board.map((row, i) =>
-    row.map((cell, j) => (
-      <div
-        key={`${i}-${j}`}
-        style={{
-          width: '20px',
-          height: '20px',
-          backgroundColor: islands.some((island) => island.x === j && island.y === i)
-            ? 'green'
-            : i === shipCoordinates.y && j === shipCoordinates.x
-            ? 'grey'
-            : 'lightblue',
-        }}
-      >
+          <p id="cords">Obecne koordynaty statku: ({shipCoordinates.x}, {shipCoordinates.y})</p>
+        </div>
       </div>
-    ))
-  )}
-</div>
-<div id="bottom-controls">
-    <button className="saveToFile" onClick={saveToFile}>Zapisz grę</button>
-    <input type="file" id="fileInput" style={{ display: 'none' }} onChange={loadFromFile} />
-    <label htmlFor="fileInput" className="customButton">Wczytaj grę</label>
-    <button className="exitGame" onClick={() => setGameStarted(false)}>Wyjdź z gry</button>
-    </div>
-  </main>
-);
+      {showModal && <Modal message={message} onClose={handleCloseModal} />}
+      <Formik initialValues={{ commandSequence: '' }} onSubmit={handleFormCommandSequence}>
+        {({ handleSubmit, handleChange, values }) => (
+          <form  id = "move_form" onSubmit={handleSubmit}>
+            <input id ="move"
+              type="text"
+              name="commandSequence"
+              value={values.commandSequence}
+              onChange={handleChange}
+            />
+            <button type="submit">Płyń!</button>
+          </form>
+        )}
+      </Formik>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${boardSize}, 1fr)`, gap: '1px', backgroundColor: 'white' }}>
+        {board.map((row, i) =>
+          row.map((cell, j) => (
+            <div
+              key={`${i}-${j}`}
+              style={{
+                width: '20px',
+                height: '20px',
+                backgroundColor: islands.some((island) => island.x === j && island.y === i)
+                  ? 'green'
+                  : i === shipCoordinates.y && j === shipCoordinates.x
+                  ? 'grey'
+                  : 'lightblue',
+              }}
+            >
+            </div>
+          ))
+        )}
+      </div>
+      <div id="bottom-controls">
+        <button className="saveToFile" onClick={saveToFile}>Zapisz grę</button>
+        <input type="file" id="fileInput" style={{ display: 'none' }} onChange={loadFromFile} />
+        <label htmlFor="fileInput" className="customButton">Wczytaj grę</label>
+        <button className="exitGame" onClick={() => setGameStarted(false)}>Wyjdź z gry</button>
+      </div>
+    </main>
+  );
 }
